@@ -1,0 +1,27 @@
+<h1>Listado de productos</h1>
+
+<div>
+    {{#each products}}
+    <div class="card">
+        <img src="{{this.thumbnail}}" class="card-img-top" alt="t{{this.title}}">
+        <div class="card-body">
+            <h5 class="card-title">{{this.title}}</h5>
+            <p>{{this.price}}</p>
+            <a href="/products/{{this._id}}" class="btn btn-primary btn-sm">Ver detalles</a>
+            <form action="/api/carts/placeholderCarId/products/{{this._id}}" method="POST">
+            <button class="btn btn-primary" type="submit">Comprar</button>
+             </form>
+        </div>
+    </div>
+    {{/each}}
+</div>
+
+<div>
+    {{#if hasPrePage}}
+    <a href="?page={{prevPage}}">Anterior</a>
+    {{/if}}
+    Página {{page}} de {{totalPages}}
+    {{#if hasNextPage}}
+    <a href="?page={{nextPage}}">Siguiente</a>
+    {{/if}}
+</div>

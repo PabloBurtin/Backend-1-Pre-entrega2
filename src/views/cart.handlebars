@@ -1,0 +1,10 @@
+<h1>Carro de compras</h1>
+
+<ul>
+    {{#each cart.products}}
+    <li>
+        {{this.product.title}} - Cantidad {{this.quantity}} - Precio: ${{this.product.price}}
+    </li>
+</ul>
+
+<a href="/products">Volver a productos</a>

@@ -97,16 +97,5 @@
     "category": "bufanda",
     "status": true,
     "thumbnail": ""
-  },
-  {
-    "id": 10,
-    "title": "Medias",
-    "description": "Medias de lana",
-    "code": "m2342234",
-    "price": 300,
-    "stock": 8,
-    "category": "medias",
-    "status": true,
-    "thumbnail": ""
   }
 ]

@@ -1,9 +1,10 @@
-<div>
+<div class="home">
     <h1>Home</h1>
     <h2>Lista de productos</h2>
     <ul>
         {{#each products}}
-        <li>{{this.title}} - {{this.price}}</li>
+        <li>{{this.title}} - {{this.price}} 
+            <img src="{{this.thumbnail}}" alt="{{this.title}}" class="product-image"></li>
         {{/each}}
     </ul>
 </div>
