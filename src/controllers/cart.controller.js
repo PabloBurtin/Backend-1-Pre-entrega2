@@ -12,28 +12,33 @@ const getCartById = async (req, res) => {
 
 const createCart = async (req, res) => {
       try{
-        const newCart = new Cart ({products: []})
-        const saved = await newCart.save();
-        res.status(201).json({status: 'success', payload: saved})
+        const newCart = await Cart.create ({products: []})
+        res.status(201).json({status: 'success', payload: newCart})
     }catch(error){
         res.status(500).json({status: 'error', message: error.message});
     }
 }
 
-const addProducToCart = async (req, res) =>{
+const addProductToCart = async (req, res) =>{
     const {cid, pid} = req.params;
     try{
         const cart = await Cart.findById(cid);
         if(!cart) return res.status(404).json({status: 'error', message: 'El carrito no existe'});
-        const existing = cart.products.find (p => p.product.toString() === pid);
-        if (existing){
-            existing.quantity +=1;
-        } else {
-            cart.products.push({product: pid, quantity: 1})
-        }
+         const productExists = await Product.findById(pid);
+        if (!productExists) return res.status(404).json({ status: "error", message: "Producto no encontrado" });
 
-        await cart.save();
-        res.status(201).json({status: 'success', payload: cart})
+        const existingProductIndex = cart.products.findIndex(
+            p => p.product.toString() === pid
+        );
+
+    if (existingProductIndex >= 0) {
+      cart.products[existingProductIndex].quantity += 1;
+    } else {
+      cart.products.push({ product: pid, quantity: 1 });
+    }
+
+    await cart.save();
+    res.status(200).json({ status: "success", payload: cart });
     }catch(error){
         res.status(500).json({status: 'error', message: error.message});
     }
@@ -97,4 +102,4 @@ const emptyCart = async (req, res) => {
     }
 }
 
-export {getCartById, createCart, addProducToCart, deleteProductFromCart, updateCart, updateProductQuantity, emptyCart}
+export {getCartById, createCart, addProductToCart, deleteProductFromCart, updateCart, updateProductQuantity, emptyCart}

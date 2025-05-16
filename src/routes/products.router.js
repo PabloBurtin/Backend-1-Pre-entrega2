@@ -1,5 +1,6 @@
 import express from "express";
 import {getAllProducts, getProductById, createProduct, updatedProduct, deleteProduct} from "../controllers/product.controller.js";
+import uploader from "../utils/uploader.js";
 
 const productsRouter = express.Router();
 
@@ -8,7 +9,7 @@ productsRouter.get ("/", getAllProducts);
 
 productsRouter.get("/:pid", getProductById);
     
-productsRouter.post("/", createProduct);
+productsRouter.post("/", uploader.single('thumbnail'), createProduct);
     
 productsRouter.put("/:pid", updatedProduct);
     

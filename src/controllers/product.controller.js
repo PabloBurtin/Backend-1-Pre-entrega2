@@ -49,7 +49,10 @@ const getProductById = async (req,res) => {
 
 const createProduct = async (req, res) =>{
     try{
-        const newProduct = req.body;
+        const { file } = req;
+        const newProduct = {...req.body,
+            thumbnail: file ? `/Imagenes/${file.filename}` : 'default.jpg',
+        };
         const product = new Product (newProduct)
         await product.save ();
         res.status(201).json({status: "success", payload: product});

@@ -20,3 +20,11 @@ body{
 h1{
     text-align: center;
 }
+
+.cart-actions {
+    margin: 20px 0;
+}
+
+.add-to-cart {
+    margin-left: 10px;
+}

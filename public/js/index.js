@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
         thumbnail: document.getElementById('thumbnail').value || 'default.jpg'
       };
 
-      socket.emit('new-product', newProduct);
+      socket.emit('newProduct', newProduct);
       form.reset();
     });
   }
