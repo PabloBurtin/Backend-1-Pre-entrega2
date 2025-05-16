@@ -1,9 +1,9 @@
 <h1>Listado de productos</h1>
 
-<div>
+<div class="card-group">
     {{#each products}}
     <div class="card">
-        <img src="{{this.thumbnail}}" class="card-img-top" alt="t{{this.title}}">
+        <img src="{{this.thumbnail}}" class="card-img-top product-image" alt="{{this.title}}">
         <div class="card-body">
             <h5 class="card-title">{{this.title}}</h5>
             <p>{{this.price}}</p>

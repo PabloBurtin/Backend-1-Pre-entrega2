@@ -7,13 +7,13 @@ const viewsRouter = express.Router();
 viewsRouter.get ('/', async (req, res)=>{
   try{
     const products = await Product.find().lean();
-    res.render('index', { products })
+    res.render('home', { products })
   }catch(error){
     res.status(500).send({message: 'Error al cargar la pagina'})
   }
 })
 
-viewsRouter.get ('/product', async (req, res) => {
+viewsRouter.get ('/products', async (req, res) => {
   try{
     const {limit = 10, page = 1, sort, query} = req.query;
 
@@ -46,7 +46,7 @@ viewsRouter.get ('/product', async (req, res) => {
   }
 })
 
-viewsRouter.get('/produts/:pid', async (req, res)=>{
+viewsRouter.get('/products/:pid', async (req, res)=>{
   try{
     const { pid } = req.params;
     const product = await Product.findById(pid).lean();

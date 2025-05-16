@@ -1,4 +1,22 @@
+*{
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+}
+
+main{
+    margin: 50px;
+    padding: 50px;
+}
+
+body{
+    margin: 50px;
+}
 .product-image {
-    height: 5px;
-    width: auto;
+   width: 50px;
+    
+}
+
+h1{
+    text-align: center;
 }
