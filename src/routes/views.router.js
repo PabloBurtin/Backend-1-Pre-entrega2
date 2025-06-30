@@ -4,14 +4,14 @@ import Cart from "../models/cart.model.js";
 
 const viewsRouter = express.Router();
 
-viewsRouter.get ('/', async (req, res)=>{
-  try{
-    const products = await Product.find().lean();
-    res.render('home', { products })
-  }catch(error){
-    res.status(500).send({message: 'Error al cargar la pagina'})
-  }
-})
+// viewsRouter.get ('/', async (req, res)=>{
+//   try{
+//     const products = await Product.find().lean();
+//     res.render('home', { products })
+//   }catch(error){
+//     res.status(500).send({message: 'Error al cargar la pagina'})
+//   }
+// })
 
 viewsRouter.get ('/products', async (req, res) => {
   try{
@@ -77,5 +77,24 @@ viewsRouter.get("/realtimeproducts", async(req, res)=> {
     res.status(500).send({ message: error.message });
   }
 });
+
+viewsRouter.get ("/", (req, res)=>{
+    res.render("index")
+})
+
+viewsRouter.get ("/login", (req, res)=>{
+    res.render("login")
+})
+
+viewsRouter.get ("/register", (req, res)=>{
+    res.render("register")
+})
+viewsRouter.get ("/profile", (req, res)=>{
+    const { firts_name, last_name, age, role } = req.user
+    res.render ("profile", { firts_name, last_name, age, role }) 
+})
+viewsRouter.get ("/failed", (req, res)=>{
+    res.render("failed")
+})
 
 export default viewsRouter;

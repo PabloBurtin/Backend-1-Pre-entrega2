@@ -11,27 +11,57 @@ import { Server } from "socket.io";
 import http from "http";
 import connectMongoDB from "./config/db.js";
 import Product from "./models/product.model.js";
+import sessionRouter from "./routes/session.router.js"
+import usersRouter from "./routes/users.router.js";
+import hbs from "express-handlebars"
+import config from "./config/index.js";
+import passport from "passport"
+import session from "express-session"
+import cookie from "express-session/session/cookie.js";
+import cookieParser from "cookie-parser";
+import initializedPassport from "./config/passport/config.js";
+
+
 
 dotenv.config()
+
+const { PORT, MONGO_URI, SECRET } = config;
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
 
+app.use(express.json());
+app.use(cookieParser());
+app.use(express.urlencoded({extended: true}));
+app.use(session({
+    secret: SECRET, 
+    saveUninitialized: true,
+    resave: false,
+    cookie: {
+        httpOnly: true,
+        sameSite: true,
+        maxAge: 24 * 60 * 60
+    }
+}))
+
+initializedPassport();
+app.use(passport.initialize());
+app.use(passport.session())
+
+app.engine("handlebars", hbs.engine());
+app.set("view", import.meta.dirname + "/views");
+app.set("views engine", "handlebars");
 
 
-app.engine("handlebars", engine());
-app.set("view engine", "handlebars");
-app.set("views", './src/views');
-
-
-const PORT = process.env.PORT;
 app.use(express.json());
 app.use(express.static("public"));
 
 connectMongoDB ();
 
+app.use("/api/users", usersRouter)
+app.use("/api/session", sessionRouter)
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartRouter);
 app.use("/", viewsRouter);
