@@ -1,5 +1,9 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import '../models/user.model.js';
+import '../models/cart.model.js';
+import '../models/product.model.js';
+
 
 dotenv.config();
 
