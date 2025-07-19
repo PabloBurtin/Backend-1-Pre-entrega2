@@ -1,11 +1,11 @@
 import { Strategy } from "passport-local";
-import userModel from "../../models/user.model.js";
+import User from "../../models/user.model.js";
 
 async function verifyRegister(req, username, password, done) {
     //logica de registro de usuario
     const { first_name, last_name, age, role } = req.body;
     try{
-        const userFound = await userModel.findOne ({email: username })
+        const userFound = await User.findOne ({email: username })
         if (userFound) return done (null, false, { message: "User already exists"})
         const newUser ={
             first_name,
@@ -15,7 +15,7 @@ async function verifyRegister(req, username, password, done) {
             password,
             email: username,
         };
-        const newDoc = await userModel.create(newUser)
+        const newDoc = await User.create(newUser)
         return done (null, newDoc)
     }
     catch(error){
@@ -26,7 +26,7 @@ async function verifyRegister(req, username, password, done) {
 
 async function verifyLogin(username, password, done) {
     try{
-        const user = await userModel.findOne({ email: username })
+        const user = await User.findOne({ email: username })
         if (!user || user.password !== password) {
             return done (null, false, {message: "invalid credentials"})
         }
