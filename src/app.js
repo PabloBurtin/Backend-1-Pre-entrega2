@@ -40,6 +40,7 @@ app.use(session({
     saveUninitialized: true,
     resave: false,
     cookie: {
+        secure: false,
         httpOnly: true,
         sameSite: true,
         maxAge: 24 * 60 * 60
@@ -51,8 +52,8 @@ app.use(passport.initialize());
 app.use(passport.session())
 
 app.engine("handlebars", hbs.engine());
-app.set("view", import.meta.dirname + "/views");
-app.set("views engine", "handlebars");
+app.set("views", import.meta.dirname + "/views");
+app.set("view engine", "handlebars");
 
 
 app.use(express.json());

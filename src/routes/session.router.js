@@ -3,7 +3,7 @@ import passport from "passport"
 
 const router = Router();
 
-router.post ("/login", passport.authenticate("login", {successRedirect: "/profile", failureRedirect:"/failed"}));
+router.post ("/login", passport.authenticate("login", {successRedirect: "/products", failureRedirect:"/failed"}));
 
 router.post ("/register", passport.authenticate("register", {successRedirect:"/login", failureRedirect:"/failed"}));
 

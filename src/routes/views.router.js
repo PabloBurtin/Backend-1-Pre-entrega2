@@ -31,14 +31,20 @@ viewsRouter.get ('/products', async (req, res) => {
 
     const result = await Product.paginate(filter, option);
 
-    res.render ('index', {
+    res.render ('products', {
       products: result.docs,
+      user: req.user ? {
+        _id: req.user._id,
+        cartId: req.user.cartId // Asegúrate de que el modelo User tenga este campo
+      } : null,
       totalPages: result.totalPages,
       prevPage: result.prevPage,
       nextPage: result.nextPage,
       page: result.page,
       hasPrevPage: result.hasPrevPage,
-      hasNextPage: result.hasNextPage
+      hasNextPage: result.hasNextPage,
+      prevLink: result.hasPrevPage ? `/products?page=${result.prevPage}&limit=${limit}${sort ? `&sort=${sort}` : ''}${query ? `&query=${query}` : ''}` : null,
+      nextLink: result.hasNextPage ? `/products?page=${result.nextPage}&limit=${limit}${sort ? `&sort=${sort}` : ''}${query ? `&query=${query}` : ''}` : null
     });
   }catch (error){
     res.status(500).send('Error en la carga de productos.')

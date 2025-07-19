@@ -1,10 +1,11 @@
 import Cart from "../models/cart.model.js";
+import Product from "../models/product.model.js";
 
 const getCartById = async (req, res) => {
     try{
-        const cart = Cart.findById(req.params.cid).populate('products.product');
+        const cart = await Cart.findById(req.params.cid).populate('products.product').lean();
         if(!cart) return res.status(404).json({status: 'error', message: "No se encontro el carrito"});
-        res.status(200).json({status: 'success', payload: cart});
+        res.render('cart', { cart });
     }catch(error){
         res.status(500).json({status: 'error', message: error.message});
     }
@@ -12,8 +13,25 @@ const getCartById = async (req, res) => {
 
 const createCart = async (req, res) => {
       try{
-        const newCart = await Cart.create ({products: []})
-        res.status(201).json({status: 'success', payload: newCart})
+        if (!req.isAuthenticated()){
+            return res.status(401).json ({status: 'error', message: 'No autenticado'})
+        }
+        //verifica si el usuario tiene ya un carrito
+        const existingCart = await Cart.findOne({ user: req.user._id})
+        if (existingCart) {
+            return res.status(400).json({
+                status: "error",
+                message: 'El usuario ya tiene un carrito activo'
+            })
+        }
+
+        const newCart = await Cart.create ({
+            user: req.user._id,
+            products: []})
+
+            await User.findByIdAndUpdate(req.user._id, {cartId: newCart._id})
+
+        res.status(201).json({status: 'success', payload: newCart, cartId: newCart._id})
     }catch(error){
         res.status(500).json({status: 'error', message: error.message});
     }

@@ -28,3 +28,38 @@ h1{
 .add-to-cart {
     margin-left: 10px;
 }
+
+.card-img-top {
+  height: 75px; /* Altura fija */
+  object-fit: cover; /* Mantiene la proporción sin distorsión */
+  width: 100%; /* Ancho completo del contenedor */
+}
+
+.card-img-top:hover {
+  opacity: 0.9;
+  transition: opacity 0.3s ease;
+}
+
+
+@media (max-width: 768px) {
+  .card-img-top {
+    height: 150px;
+  }
+}
+
+.card-img-top {
+  height: 180px;
+  object-fit: cover;
+}
+
+.remove-from-cart {
+  transition: all 0.3s;
+}
+
+.remove-from-cart:hover {
+  transform: scale(1.05);
+}
+
+.alert-info {
+  background-color: #e2f4ff;
+}

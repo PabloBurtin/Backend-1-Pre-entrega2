@@ -1,0 +1,77 @@
+<div class="container mt-4" data-cart-id="{{user.cartId}}">
+  <h1 class="text-center">Productos Disponibles</h1>
+
+   {{!-- AGREGAR AQUÍ EL BOTÓN DE CARRITO --}}
+  {{#if user}}
+    <div class="text-end mb-4">
+      {{#if user.cartId}}
+        <a href="/carts/{{user.cartId}}" class="btn btn-primary">
+          <i class="bi bi-cart-fill"></i> Ver Mi Carrito
+        </a>
+      {{else}}
+        <button id="createCartBtn" class="btn btn-success">
+          <i class="bi bi-cart-plus"></i> Crear Carrito
+        </button>
+      {{/if}}
+    </div>
+  {{/if}}
+
+  {{!-- Filtros y ordenamiento --}}
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <form class="d-flex">
+        <input type="text" name="query" class="form-control" placeholder="Buscar por categoría">
+        <button type="submit" class="btn btn-primary ms-2">Filtrar</button>
+      </form>
+    </div>
+    <div class="col-md-6 text-end">
+      <div class="btn-group">
+        <a href="/products?sort=asc" class="btn btn-outline-secondary">Precio ↑</a>
+        <a href="/products?sort=desc" class="btn btn-outline-secondary">Precio ↓</a>
+      </div>
+    </div>
+  </div>
+
+
+  {{!-- Lista de productos --}}
+  <div class="row">
+    {{#each products}}
+      <div class="col-md-4 mb-4">
+        <div class="card h-100">
+          <img src="{{this.thumbnail}}" class="card-img-top" alt="{{this.title}}">
+          <div class="card-body">
+            <h5 class="card-title">{{this.title}}</h5>
+            <p class="card-text">${{this.price}}</p>
+            <p class="card-text"><small class="text-muted">{{this.category}}</small></p>
+            <button class="btn btn-sm btn-primary add-to-cart" 
+                    data-product-id="{{this._id}}"
+                    {{#unless user}}disabled{{/unless}}>
+              Agregar al Carrito
+            </button>
+          </div>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+
+  {{!-- Paginación --}}
+  <nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+      {{#if hasPrevPage}}
+        <li class="page-item">
+          <a class="page-link" href="{{prevLink}}">Anterior</a>
+        </li>
+      {{/if}}
+      <li class="page-item active">
+        <span class="page-link">Página {{page}} de {{totalPages}}</span>
+      </li>
+      {{#if hasNextPage}}
+        <li class="page-item">
+          <a class="page-link" href="{{nextLink}}">Siguiente</a>
+        </li>
+      {{/if}}
+    </ul>
+  </nav>
+</div>
+
+<script src="/js/products.js"></script>
