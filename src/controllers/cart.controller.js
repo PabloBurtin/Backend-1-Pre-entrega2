@@ -4,22 +4,23 @@ import User from "../models/user.model.js";
 
 const getCartById = async (req, res) => {
     try{
-        const cart = await Cart.findById(req.params.cid).populate('products.product').lean();
+        const cart = await Cart.findById(req.params.cid).populate({
+            path: 'products.product',
+            model: 'Product'}).lean();
         if(!cart) return res.status(404).json({status: 'error', message: "No se encontro el carrito"});
-     
-        const productWithTotals = cart.products.map(item => ({...item,
-            total: item.product.price * item.quantity
-        }))
+            
+        console.log('Producto poblado:', cart.products[0]?.product);
+        
+        const cartWithTotal = {
+            ...cart,
+            products: cart.products.map(item =>({
+                ...item,
+                itemTotal: item.product.price * item.quantity
+            })),
+            cartTotal: cart.products.reduce((total, item) => total + (item.product.price * item.quantity), 0)
+        };
 
-        const cartTotal = productWithTotals.reduce ((sum, item) => sum + item.total, 0)
-
-        res.render ('cart', {
-            cart: {
-                ...cart,
-                products: productWithTotals,
-                cartTotal
-            }
-        })
+        res.render('cart', {cart: cartWithTotal})
     }catch(error){
         res.status(500).json({status: 'error', message: error.message});
     }
