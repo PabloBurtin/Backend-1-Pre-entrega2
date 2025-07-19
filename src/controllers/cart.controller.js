@@ -2,30 +2,97 @@ import Cart from "../models/cart.model.js";
 import Product from "../models/product.model.js";
 import User from "../models/user.model.js";
 
-const getCartById = async (req, res) => {
-    try{
-        const cart = await Cart.findById(req.params.cid).populate({
-            path: 'products.product',
-            model: 'Product'}).lean();
-        if(!cart) return res.status(404).json({status: 'error', message: "No se encontro el carrito"});
-            
-        console.log('Producto poblado:', cart.products[0]?.product);
-        
-        const cartWithTotal = {
-            ...cart,
-            products: cart.products.map(item =>({
-                ...item,
-                itemTotal: item.product.price * item.quantity
-            })),
-            cartTotal: cart.products.reduce((total, item) => total + (item.product.price * item.quantity), 0)
-        };
+// const getCartById = async (req, res) => {
+//     try{
+//         console.log ("Accediendo a carrito ID", req.params.cid)
 
-        res.render('cart', {cart: cartWithTotal})
-    }catch(error){
-        res.status(500).json({status: 'error', message: error.message});
+//         const cart = await Cart.findById(req.params.cid).populate({
+//             path: 'products.product',
+//             model: 'Product',
+//             select: 'title price thumbnail'}).lean();
+//         if(!cart) {
+//             console.log('Carrito no encontrado');
+//             return res.status(404).json({status: 'error', message: "No se encontro el carrito"});
+//         }
+        
+//         const validatedProducts = cart.products.map(item =>{
+//             if(!item.product?.price || isNaN(item.product.price)){
+//                 console.warn('Producto sin precio valido:', item.product?._id);
+//                 item.product.price = 0;
+//             }
+//             return item
+//         })
+
+//         const cartWithTotal = {
+//             ...cart,
+//             products: validatedProducts.map(item =>({
+//                 ...item,
+//                 itemTotal: Number(item.product.price) * item.quantity
+//             })),
+//             cartTotal: validatedProducts.reduce((total, item) => total + (Number(item.product.price) * item.quantity), 0)
+//         };
+
+//            console.log('Totales calculados:', cartWithTotal.cartTotal);
+
+//         res.render('cart', { cart: cartWithTotal })
+//     }catch(error){
+//         res.status(500).json({status: 'error', message: error.message});
+//     }
+// }
+const getCartById = async (req, res) => {
+    try {
+        console.log("🔵 Accediendo a carrito ID:", req.params.cid);
+
+        const cart = await Cart.findById(req.params.cid)
+            .populate({
+                path: 'products.product',
+                model: 'Product',
+                select: 'title price thumbnail'
+            })
+            .lean();
+
+        if (!cart) {
+            console.log('❌ Carrito no encontrado');
+            return res.status(404).render('error', { error: "Carrito no encontrado" });
+        }
+
+        // Debug: Verifica estructura completa
+        console.log('📦 Carrito obtenido:', JSON.stringify(cart, null, 2));
+
+        const validatedProducts = cart.products.map(item => {
+            if (!item.product || typeof item.product !== 'object') {
+                console.warn('⚠️ Producto no poblado correctamente:', item);
+                return { ...item, product: { price: 0, _id: item.product }, itemTotal: 0 };
+            }
+
+            const price = Number(item.product.price) || 0;
+            return {
+                ...item,
+                product: {
+                    ...item.product,
+                    price: price
+                },
+                itemTotal: price * item.quantity
+            };
+        });
+
+        const cartTotal = validatedProducts.reduce((total, item) => total + item.itemTotal, 0);
+
+        console.log('✅ Totales calculados:', { cartTotal });
+
+        res.render('cart', { 
+            cart: {
+                ...cart,
+                products: validatedProducts,
+                cartTotal: cartTotal
+            }
+        });
+
+    } catch (error) {
+        console.error('🔥 Error:', error);
+        res.status(500).render('error', { error: "Error al cargar el carrito" });
     }
 }
-
 const createCart = async (req, res) => {
       try{
         if (!req.isAuthenticated()){

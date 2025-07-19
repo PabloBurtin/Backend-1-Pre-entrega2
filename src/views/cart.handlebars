@@ -4,6 +4,9 @@
   {{#if cart.products.length}}
     <div class="row">
       {{#each cart.products}}
+      {{#unless this.product.price}}
+      <div class="alert alert-warning">Precio no disponible</div>
+      {{/unless}}
         <div class="col-md-4 mb-4">
           <div class="card h-100">
             <img src="{{this.product.thumbnail}}" class="card-img-top" alt="{{this.product.title}}" style="height: 180px; object-fit: cover;">
