@@ -6,7 +6,20 @@ const getCartById = async (req, res) => {
     try{
         const cart = await Cart.findById(req.params.cid).populate('products.product').lean();
         if(!cart) return res.status(404).json({status: 'error', message: "No se encontro el carrito"});
-        res.render('cart', { cart });
+     
+        const productWithTotals = cart.products.map(item => ({...item,
+            total: item.product.price * item.quantity
+        }))
+
+        const cartTotal = productWithTotals.reduce ((sum, item) => sum + item.total, 0)
+
+        res.render ('cart', {
+            cart: {
+                ...cart,
+                products: productWithTotals,
+                cartTotal
+            }
+        })
     }catch(error){
         res.status(500).json({status: 'error', message: error.message});
     }
@@ -41,23 +54,26 @@ const createCart = async (req, res) => {
 const addProductToCart = async (req, res) =>{
     const {cid, pid} = req.params;
     try{
-        const cart = await Cart.findById(cid);
-        if(!cart) return res.status(404).json({status: 'error', message: 'El carrito no existe'});
-         const productExists = await Product.findById(pid);
-        if (!productExists) return res.status(404).json({ status: "error", message: "Producto no encontrado" });
+        const cart = await Cart.findOne({_id: cid, user: req.user._id});
+        if(!cart) 
+            {return res.status(404).json({status: 'error', message: 'El carrito no existe'})};
+         
+        const product = await Product.findById(pid);
+        if (!product) return res.status(404).json({ status: "error", message: "Producto no encontrado" });
 
-        const existingProductIndex = cart.products.findIndex(
-            p => p.product.toString() === pid
+        const productIndex = cart.products.findIndex(
+            (item) => item.product.toString() === pid
         );
 
-    if (existingProductIndex >= 0) {
-      cart.products[existingProductIndex].quantity += 1;
+    if (productIndex >= 0) {
+      cart.products[productIndex].quantity += 1;
     } else {
       cart.products.push({ product: pid, quantity: 1 });
     }
 
     await cart.save();
-    res.status(200).json({ status: "success", payload: cart });
+
+    res.status(200).json({ status: "success", payload: cart, message: "Producto agregado al carrito" });
     }catch(error){
         res.status(500).json({status: 'error', message: error.message});
     }

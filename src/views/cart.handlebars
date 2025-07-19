@@ -11,7 +11,7 @@
               <h5 class="card-title">{{this.product.title}}</h5>
               <p class="card-text">${{this.product.price}} c/u</p>
               <p class="card-text">Cantidad: {{this.quantity}}</p>
-              <p class="card-text">Total: ${{multiply this.product.price this.quantity}}</p>
+              <p class="card-text">Total: ${{this.total}}</p>
               <button class="btn btn-danger btn-sm remove-from-cart" data-product-id="{{this.product._id}}">
                 Eliminar
               </button>
@@ -22,7 +22,7 @@
     </div>
 
     <div class="text-end mt-4">
-      <h4>Total del carrito: ${{calculateTotal cart.products}}</h4>
+      <h4>Total del carrito: ${{cart.cartTotal}}</h4>
       <a href="/products" class="btn btn-secondary me-2">Seguir comprando</a>
       <button id="checkoutBtn" class="btn btn-success">Finalizar compra</button>
     </div>

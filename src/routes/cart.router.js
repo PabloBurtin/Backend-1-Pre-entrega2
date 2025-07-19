@@ -9,9 +9,7 @@ cartRouter.post ("/",
         createCart);
 
 cartRouter.get ("/:cid", getCartById);
-cartRouter.post ("/:cid/products/:pid", 
-    passport.authenticate('current', { session: false }),
-    addProductToCart);
+cartRouter.post ("/:cid/products/:pid",addProductToCart);
 cartRouter.put ("/:cid", updateCart);
 cartRouter.put('/:cid/products/:pid', updateProductQuantity);
 cartRouter.delete('/:cid/products/:pid', deleteProductFromCart);

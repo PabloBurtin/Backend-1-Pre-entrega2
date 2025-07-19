@@ -43,11 +43,29 @@
             <h5 class="card-title">{{this.title}}</h5>
             <p class="card-text">${{this.price}}</p>
             <p class="card-text"><small class="text-muted">{{this.category}}</small></p>
+
+            {{#if ../user.cartId}}
+            <div class="quantity-selector d-flex align-items-center gap-2 mb-2">
+              <button class="btn btn-sm btn-outline-secondary quantity-minus" data-product-id="{{this._id}}">-</button>
+              <input type="number" class="form-control form-control-sm quantity-input"
+              data-product-id="{{this._id}}"
+              value="1"
+              min="1"
+              max="{{this.stock}}"
+              style="width: 60; text-align: center;">
+              <button class="btn btn-sm btn-outline-secondary quantity-plus"
+              data-product-id="{{this._id}}">+</button>
+            </div>
             <button class="btn btn-sm btn-primary add-to-cart" 
                     data-product-id="{{this._id}}"
-                    {{#unless user}}disabled{{/unless}}>
+                    onclick="addToCart ('{{../user.cartId}}', '{{this._id}}')">
               Agregar al Carrito
             </button>
+            {{else}}
+            <button class="btn btn-sm btn-succes" onclick="createCartForPurchase()">
+              <i class="bi bi-cart-plus"></i> Crear carrito para comprar
+            </button>
+            {{/if}}
           </div>
         </div>
       </div>
