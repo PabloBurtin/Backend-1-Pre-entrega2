@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const response = await fetch(`/api/carts/${cartId}/empty`, {
         method: 'DELETE'
       });
-      const resul = await response.json();
+      const result = await response.json();
 
       if (result.status === 'success') {
         showAlert('success', 'Carrito eliminado correctamente');
