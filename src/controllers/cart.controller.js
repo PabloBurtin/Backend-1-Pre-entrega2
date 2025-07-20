@@ -205,4 +205,28 @@ const emptyCart = async (req, res) => {
     }
 }
 
-export {getCartById, createCart, addProductToCart, deleteProductFromCart, updateCart, updateProductQuantity, emptyCart}
+const deleteCart = async (req, res) => {
+  try {
+    const { cid } = req.params;
+    
+    // Primero encuentra el carrito para obtener el usuario asociado
+    const cart = await cartModel.findById(cid);
+    if (!cart) {
+      return res.status(404).send({ respuesta: 'Error', mensaje: 'Cart not found' });
+    }
+
+    // Elimina el carrito
+    await cartModel.findByIdAndDelete(cid);
+    
+    // Si hay un usuario asociado, elimina la referencia al carrito
+    if (cart.user) {
+      await userModel.findByIdAndUpdate(cart.user, { $unset: { cartId: "" } });
+    }
+
+    res.status(200).send({ respuesta: 'OK', mensaje: 'Cart deleted successfully' });
+  } catch (error) {
+    res.status(400).send({ respuesta: 'Error', mensaje: error });
+  }
+};
+
+export {getCartById, createCart, addProductToCart, deleteProductFromCart, updateCart, updateProductQuantity, emptyCart, deleteCart}
