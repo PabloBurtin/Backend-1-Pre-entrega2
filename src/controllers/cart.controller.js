@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Cart from "../models/cart.model.js";
 import Product from "../models/product.model.js";
 import User from "../models/user.model.js";
@@ -152,28 +153,24 @@ const emptyCart = async (req, res) => {
     }
 }
 
-const deleteCart = async (req, res) => {
-  try {
-    const { cid } = req.params;
+const deleteCartByUser = async (req, res) => {
     
-    // Primero encuentra el carrito para obtener el usuario asociado
-    const cart = await cartModel.findById(cid);
-    if (!cart) {
-      return res.status(404).send({ respuesta: 'Error', mensaje: 'Cart not found' });
+    try{
+        const { uid } = req.params;
+        const cart = await Cart.findOne( { userId: uid });
+        if (!mongoose.Types.ObjectId.isValid(uid)) {
+            return res.status(400).json ({ message: 'ID de usuario no válido'});
+        }
+        const deletedCart = await Cart.findOneAndDelete ({ userId: uid })
+
+        if (!deletedCart){
+            return res.status(404).json({ message: 'No se encontró carrito para este usuario'})
+        }
+
+        res.status(200).json ({ message: 'Carrito eliminado correctamente.' })
+    } catch (error) {
+        res.status(500).json({ message: 'Error al eleminar el carrito', error})
     }
+}
 
-    // Elimina el carrito
-    await cartModel.findByIdAndDelete(cid);
-    
-    // Si hay un usuario asociado, elimina la referencia al carrito
-    if (cart.user) {
-      await userModel.findByIdAndUpdate(cart.user, { $unset: { cartId: "" } });
-    }
-
-    res.status(200).send({ respuesta: 'OK', mensaje: 'Cart deleted successfully' });
-  } catch (error) {
-    res.status(400).send({ respuesta: 'Error', mensaje: error });
-  }
-};
-
-export {getCartById, createCart, addProductToCart, deleteProductFromCart, updateCart, updateProductQuantity, emptyCart, deleteCart}
+export {getCartById, createCart, addProductToCart, deleteProductFromCart, updateCart, updateProductQuantity, emptyCart, deleteCartByUser }
