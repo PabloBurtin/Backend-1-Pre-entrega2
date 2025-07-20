@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const productId = e.target.dataset.productId;
       const quantityInput = document.querySelector(`.quantity-input[data-product-id="${productId}"]`);
-      const quantity = parseInt(quantityInput.value);
+      const quantity = parseInt(quantityInput.value) || 1;
 
       try {
         const response = await fetch(`/api/carts/${cartId}/products/${productId}`, {
@@ -72,6 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (result.status === 'success') {
           showAlert('success', `✅ ${quantity} unidad(es) agregada(s) al carrito`);
+          quantityInput.value = 1;
         } else {
           showAlert('error', `❌ Error: ${result.message || 'No se pudo agregar el producto'}`);
         }

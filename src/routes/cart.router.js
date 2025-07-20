@@ -7,17 +7,14 @@ const cartRouter = express.Router();
 cartRouter.post ("/", 
     passport.authenticate('session'),
         createCart);
-
-cartRouter.get ("/api/carts/:cid", getCartById);
-cartRouter.post ("/:cid/products/:pid",addProductToCart);
+cartRouter.get("/:cid",getCartById);
+cartRouter.post ("/:cid/products/:pid", addProductToCart);
 cartRouter.put ("/:cid", updateCart);
 cartRouter.put('/:cid/products/:pid', updateProductQuantity);
 cartRouter.delete('/:cid/products/:pid', deleteProductFromCart);
 cartRouter.delete('/:cid/empty', emptyCart)
 cartRouter.delete('/:cid', deleteCart)
-cartRouter.get('/carts/:cid', (req, res) => {
-  res.redirect(`/api/carts/${req.params.cid}`);
-});
+
 
 
 export default cartRouter;

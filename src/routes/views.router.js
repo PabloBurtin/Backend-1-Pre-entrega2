@@ -63,17 +63,41 @@ viewsRouter.get('/products/:pid', async (req, res)=>{
   }
 })
 
-viewsRouter.get ('/carts/:cid', async (req,res)=>{
-  try{
+viewsRouter.get('/carts/:cid', async (req,res)=>{
+  try {
     const { cid } = req.params;
-    const cart = await Cart.findById(cid).populate('products.product').lean();
-    if (!cart) return res.status(404).send ('El carrito no fue encontrado o no existe');
-    res.render ('cart', {cart});
-  }catch(error){
+    const cart = await Cart.findById(cid).populate({
+      path: 'products.product',
+      model: 'Product',
+      select: 'title price thumbnail'
+    }).lean();
+    
+    if (!cart) return res.status(404).send('El carrito no fue encontrado o no existe');
+
+    const validatedProducts = cart.products.map(item => {
+      if (!item.product?.price || isNaN(item.product.price)) {
+        item.product.price = 0;
+      }
+      return item;
+    });
+
+    const cartWithTotal = {
+      ...cart,
+      products: validatedProducts.map(item => ({
+        ...item,
+        itemTotal: Number(item.product.price) * item.quantity
+      })),
+      cartTotal: validatedProducts.reduce(
+        (total, item) => total + (Number(item.product.price) * item.quantity), 
+        0
+      )
+    };
+
+    res.render('cart', { cart: cartWithTotal });
+  } catch(error) {
     res.status(500).send('Error al cargar el carrito');
   }
-})
-
+});
 
 viewsRouter.get("/realtimeproducts", async(req, res)=> {
   try{

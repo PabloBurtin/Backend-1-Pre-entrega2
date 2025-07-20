@@ -69,6 +69,8 @@ const createCart = async (req, res) => {
 
 const addProductToCart = async (req, res) =>{
     const {cid, pid} = req.params;
+    const { quantity } = req.body;
+
     try{
         const cart = await Cart.findOne({_id: cid, user: req.user._id});
         if(!cart) 
@@ -82,14 +84,14 @@ const addProductToCart = async (req, res) =>{
         );
 
     if (productIndex >= 0) {
-      cart.products[productIndex].quantity += 1;
+      cart.products[productIndex].quantity += parseInt(quantity) || 1;
     } else {
-      cart.products.push({ product: pid, quantity: 1 });
+      cart.products.push({ product: pid, quantity: parseInt (quantity) || 1 });
     }
 
     await cart.save();
 
-    res.status(200).json({ status: "success", payload: cart, message: "Producto agregado al carrito" });
+    res.status(200).json({ status: "success", payload: cart, message: `Producto agregado al carrito (${quantity} unidad(es))` });
     }catch(error){
         res.status(500).json({status: 'error', message: error.message});
     }

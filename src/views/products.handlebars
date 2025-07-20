@@ -53,7 +53,7 @@
             {{#if ../user.cartId}}
             <div class="quantity-selector d-flex align-items-center gap-2 mb-2">
               <button class="btn btn-sm btn-outline-secondary quantity-minus" data-product-id="{{this._id}}">-</button>
-              <input type="number" class="form-control form-control-sm quantity-input"
+              <input type="text" class="form-control form-control-sm quantity-input"
               data-product-id="{{this._id}}"
               value="1"
               min="1"
@@ -63,8 +63,7 @@
               data-product-id="{{this._id}}">+</button>
             </div>
             <button class="btn btn-sm btn-primary add-to-cart" 
-                    data-product-id="{{this._id}}"
-                    onclick="addProductToCart ('{{../user.cartId}}', '{{this._id}}')">
+                    data-product-id="{{this._id}}">
               Agregar al Carrito
             </button>
             {{else}}
