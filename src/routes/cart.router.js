@@ -1,5 +1,5 @@
 import express from "express";
-import { getCartById, createCart, addProductToCart, deleteProductFromCart, updateCart, updateProductQuantity,emptyCart, deleteCartByUser } from "../controllers/cart.controller.js";
+import { getCartById, createCart, addProductToCart, deleteProductFromCart, updateCart, updateProductQuantity,emptyCart, deleteCart } from "../controllers/cart.controller.js";
 import passport from "passport";
 
 const cartRouter = express.Router();
@@ -13,8 +13,8 @@ cartRouter.post ("/:cid/products/:pid",addProductToCart);
 cartRouter.put ("/:cid", updateCart);
 cartRouter.put('/:cid/products/:pid', updateProductQuantity);
 cartRouter.delete('/:cid/products/:pid', deleteProductFromCart);
-cartRouter.delete('/:cid', emptyCart)
-cartRouter.delete('/delete/:uid', deleteCartByUser)
+cartRouter.delete('/:cid/empty', emptyCart)
+cartRouter.delete('/:cid', deleteCart)
 
 
 export default cartRouter;

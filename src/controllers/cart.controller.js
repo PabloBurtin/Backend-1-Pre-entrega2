@@ -153,24 +153,29 @@ const emptyCart = async (req, res) => {
     }
 }
 
-const deleteCartByUser = async (req, res) => {
-    
+const deleteCart = async (req, res) =>{
     try{
-        const { uid } = req.params;
-        const cart = await Cart.findOne( { userId: uid });
-        if (!mongoose.Types.ObjectId.isValid(uid)) {
-            return res.status(400).json ({ message: 'ID de usuario no válido'});
-        }
-        const deletedCart = await Cart.findOneAndDelete ({ userId: uid })
+        const { cid } = req.params;
 
-        if (!deletedCart){
-            return res.status(404).json({ message: 'No se encontró carrito para este usuario'})
+        const cart = await Cart.findOne({ _id: cid} );
+        if(!cart){
+            return res.status(404).json({ status: 'error', message: 'Carrito no encontrado'});
         }
 
-        res.status(200).json ({ message: 'Carrito eliminado correctamente.' })
-    } catch (error) {
-        res.status(500).json({ message: 'Error al eleminar el carrito', error})
+            await Cart.findByIdAndDelete(cid);
+
+        // Opcional: Limpiar cartId del usuario (si existe)
+        await User.updateOne(
+            { cartId: cid },
+            { $unset: { cartId: 1 } })
+
+        res.status(200).json({
+            status: 'success',
+            message: 'Carrito elmininado permanentemente'
+        })
+    }catch(error){
+        res.status(500).json({ status: 'error', message: error.message });
     }
 }
 
-export {getCartById, createCart, addProductToCart, deleteProductFromCart, updateCart, updateProductQuantity, emptyCart, deleteCartByUser }
+export {getCartById, createCart, addProductToCart, deleteProductFromCart, updateCart, updateProductQuantity, emptyCart, deleteCart }

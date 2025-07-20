@@ -1,3 +1,5 @@
+
+
 document.addEventListener('DOMContentLoaded', () => {
   const container = document.querySelector('.container');
   const cartId = container?.dataset.cartId;
@@ -100,6 +102,49 @@ document.addEventListener('DOMContentLoaded', () => {
       alert('Error al crear carrito: ' + error.message);
     }
   });
+
+  // 5. Vaciar el carrito
+  document.getElementById('emptyCartBtn')?.addEventListener('click', async () => {
+    if (!confirm('¿Estas seguro de vaciar el carrito? Todos los productos se eliminarán.'))
+      return;
+    try{
+      const response = await fetch(`/api/carts/${cartId}/empty`, {
+        method: 'DELETE'
+      });
+      const resul = await response.json();
+
+      if (result.status === 'success') {
+        showAlert('success', 'Carrito eliminado correctamente');
+        settimeout(() => window.location.reload(), 1500)
+      }else{
+        showAlert('error', `Error: ${result.message || 'No se pudo vaciar el carrito'}`)
+      }
+    }catch(error){
+      showAlert('error', 'Error de conexion: ' + error.message)
+    }
+  })
+
+// 6. Eliminar el carrito permanentemente
+document.getElementById('deleteCartBtn')?.addEventListener('click', async() =>{
+  if (!confirm('¿Estás serguro de eliminar el carrito? Esta acción no se puede deshacer'))
+    return;
+
+  try{
+    const response = await fetch(`/api/carts/${cartId}`, {
+      method: 'DELETE'
+    });
+    const result = await response.json();
+
+    if (result.status === 'success'){
+      showAlert('success', 'El carrito fue eliminado permanentemente');
+      setTimeout(() => window.location.reload(), 1500);
+    }else{
+      showAlert('error', `Error: ${result.message || 'No se pudo elminar el carrito'}`)
+    }
+  }catch(error){
+    showAlert('error', 'Error de conexion' + error.message)
+  }
+})
 
   // Helper para mostrar alertas
   function showAlert(type, message) {
