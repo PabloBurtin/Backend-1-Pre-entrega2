@@ -28,9 +28,16 @@ async function verifyRegister(req, username, password, done) {
 async function verifyLogin(username, password, done) {
     try{
         const user = await User.findOne({ email: username })
-        if (!user || !isValidPassword(user, password)) {
-            return done (null, false, {message: "Usuario o contraseña incorrecta"})
+        if (!user) {
+            return done(null, false, { message: "Credenciales inválidas" });
         }
+        
+        // Usar isValidPassword correctamente
+        if (!isValidPassword(password, user.password)) {
+            return done(null, false, { message: "Credenciales inválidas" });
+        }
+        
+        return done(null, user);
     }
     catch(error){
         console.error(error);

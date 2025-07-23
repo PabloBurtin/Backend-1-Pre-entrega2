@@ -34,6 +34,7 @@ const io = new Server(server);
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({extended: true}));
+app.use(express.static("public"));
 app.use(session({
     secret: SECRET, 
     saveUninitialized: true,
@@ -50,21 +51,17 @@ initializedPassport();
 app.use(passport.initialize());
 app.use(passport.session())
 
-app.engine("handlebars", hbs.engine());
-app.set("views", import.meta.dirname + "/views");
-app.set("view engine", "handlebars");
-
-
-app.use(express.json());
-app.use(express.static("public"));
-
-
 //Rutas
 app.use("/", viewsRouter);
 app.use("/api/users", usersRouter)
 app.use("/api/session", sessionRouter)
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartRouter);
+
+
+app.engine("handlebars", hbs.engine());
+app.set("views", import.meta.dirname + "/views");
+app.set("view engine", "handlebars");
 
 
 
