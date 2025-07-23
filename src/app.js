@@ -1,18 +1,18 @@
 import express from "express";
-import productsRouter from "./routes/products.router.js";
-import path from "path";
-import { fileURLToPath } from "url";
-import dotenv from 'dotenv'
+import dotenv from 'dotenv';
 import mongoose from "mongoose";
+
+//Importación de rutas
+import productsRouter from "./routes/products.router.js";
 import cartRouter from "./routes/cart.router.js";
 import viewsRouter from "./routes/views.router.js";
+import sessionRouter from "./routes/session.router.js"
+import usersRouter from "./routes/users.router.js";
+
 import { engine } from "express-handlebars";
 import { Server } from "socket.io";
 import http from "http";
-import connectMongoDB from "./config/db.js";
 import Product from "./models/product.model.js";
-import sessionRouter from "./routes/session.router.js"
-import usersRouter from "./routes/users.router.js";
 import hbs from "express-handlebars"
 import config from "./config/index.js";
 import passport from "passport"
@@ -26,7 +26,6 @@ import initializedPassport from "./config/passport/config.js";
 dotenv.config()
 
 const { PORT, MONGO_URI, SECRET } = config;
-
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
@@ -59,13 +58,14 @@ app.set("view engine", "handlebars");
 app.use(express.json());
 app.use(express.static("public"));
 
-connectMongoDB ();
 
+//Rutas
+app.use("/", viewsRouter);
 app.use("/api/users", usersRouter)
 app.use("/api/session", sessionRouter)
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartRouter);
-app.use("/", viewsRouter);
+
 
 
 io.on("connection", (socket)=> {
@@ -106,3 +106,10 @@ io.on("connection", (socket)=> {
 });
 
 server.listen(PORT, ()=> console.log(`Servidor iniciado en: http://localhost:${PORT}`) );
+
+mongoose.connect(MONGO_URI)
+  .then (()=> console.log("MongoDB connected succesfully"))
+  .catch((error)=>{
+    console.error({error: err.message})
+    process.exit(1)
+  })

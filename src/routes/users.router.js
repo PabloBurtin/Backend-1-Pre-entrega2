@@ -12,5 +12,9 @@ router.get("/:id", async (req, res)=>{
 router.delete("/:id", async (req, res)=>{
     res.json(await User.deleteOne({ _id:req.params.id }))
 })
+// router.update("/:id", async (req, res)=>{
+//     res.json(await User.findByIdAndUpdate({ _id:req.params.id}))
+// })
+
 
 export default router

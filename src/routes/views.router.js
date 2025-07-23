@@ -4,14 +4,6 @@ import Cart from "../models/cart.model.js";
 
 const viewsRouter = express.Router();
 
-// viewsRouter.get ('/', async (req, res)=>{
-//   try{
-//     const products = await Product.find().lean();
-//     res.render('home', { products })
-//   }catch(error){
-//     res.status(500).send({message: 'Error al cargar la pagina'})
-//   }
-// })
 
 viewsRouter.get ('/products', async (req, res) => {
   try{
@@ -35,7 +27,7 @@ viewsRouter.get ('/products', async (req, res) => {
       products: result.docs,
       user: req.user ? {
         _id: req.user._id,
-        cartId: req.user.cartId // Asegúrate de que el modelo User tenga este campo
+        cartId: req.user.cartId
       } : null,
       totalPages: result.totalPages,
       prevPage: result.prevPage,
