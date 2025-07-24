@@ -17,7 +17,6 @@ import hbs from "express-handlebars"
 import config from "./config/index.js";
 import passport from "passport"
 import session from "express-session"
-import cookie from "express-session/session/cookie.js";
 import cookieParser from "cookie-parser";
 import initializedPassport from "./config/passport/config.js";
 
@@ -43,7 +42,7 @@ app.use(session({
         secure: false,
         httpOnly: true,
         sameSite: true,
-        maxAge: 24 * 60 * 60
+        maxAge: 60 * 60 * 1000
     }
 }))
 
