@@ -5,4 +5,4 @@ URI_MONGODB=mongodb+srv://pabloech2314:dp210314@cluster0.3os2wtb.mongodb.net/myE
 
 SECRET=pablyx23h
 
-JWT:
+PRIVATE_KEY=esta-es-mi-aplicacion-de-comercio
