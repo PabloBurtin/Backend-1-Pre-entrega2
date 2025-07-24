@@ -5,19 +5,26 @@ import { generateToken, verifySign } from "../utils/jwt.js";
 
 const router = Router();
 
-router.post ("/login", (req, res)=>{
-    try{
-        const access_token = generateToken(req.user);
-
+router.post ("/login", (req, res, next)=>{
+    passport.authenticate("login", { session: false }, (err, user, info) => {
+        if (err) {
+            return res.status(500).redirect('/login?error=server_error');
+        }
+        if (!user) {
+            return res.status(401).redirect('/login?error=invalid_credentials');
+        }
+        
+        // Generar token JWT
+        const access_token = generateToken(user);
+        
+        // Configurar cookie
         res.cookie('access_token', access_token, {
             httpOnly: true,
-            maxAge: 60 * 60 * 1000
+            maxAge: 3600000
         });
-        res.redirect('/products')
-    }catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, message: "Error al generar token"})
-    }
+        
+        return res.redirect('/products');
+    })(req, res, next);
 });
 
 router.post ("/register",  (req, res)=>{
@@ -36,24 +43,13 @@ router.post ("/register",  (req, res)=>{
     }
 });
 
-router.post ("logout", (req, res)=>{
-    req.logout(err=> {
-        res.clearCookie('access_token');
-        res.json({ succes: true, message: "Sesión cerrada correctamente"})
-    })
+router.get("/logout", (req, res) => {
+    res.clearCookie('access_token');
+    res.redirect('/login');
 });
 
-router.get("/api/session/current", ()=>{})
-
-router.get("/products", passport.authenticate("jwt", {session: false }), (req, res) =>
-{
-    if(req.user) {
-        res.redirect("/session/products")
-    }else{
-        res.status(401).json({ error: "No esta autorizado. Ingrese su usuario y contraseña"})
-    }
-
-    
-} )
+router.get("/current", passport.authenticate("jwt", { session: false }), (req, res) => {
+    res.json({ user: req.user });
+});
 
 export default router

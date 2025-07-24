@@ -1,3 +1,9 @@
+{{#if error}}
+  <div class="alert alert-danger">
+    {{error}}
+  </div>
+{{/if}}
+
 <form action="/api/session/login" method="POST">
 <label>Email:
     <input type="email" name="email" placeholder="example@mail.com" value="">

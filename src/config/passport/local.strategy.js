@@ -36,8 +36,12 @@ async function verifyLogin(username, password, done) {
         if (!isValidPassword(password, user.password)) {
             return done(null, false, { message: "Credenciales inválidas" });
         }
+
+        const userWithoutSensitiveData = user.toObject();
+        delete userWithoutSensitiveData.password;
+        delete userWithoutSensitiveData.__v;
         
-        return done(null, user);
+        return done(null, userWithoutSensitiveData);
     }
     catch(error){
         console.error(error);

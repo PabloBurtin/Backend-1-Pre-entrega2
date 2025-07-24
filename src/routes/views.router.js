@@ -2,7 +2,9 @@ import express from "express";
 import Product from "../models/product.model.js";
 import Cart from "../models/cart.model.js";
 
+
 const viewsRouter = express.Router();
+
 
 
 viewsRouter.get ('/products', async (req, res) => {
@@ -105,7 +107,16 @@ viewsRouter.get ("/", (req, res)=>{
 })
 
 viewsRouter.get ("/login", (req, res)=>{
-    res.render("login")
+    if (req.cookies.jwt) {
+        return res.redirect('/products');
+    }
+    
+    // Mostrar mensaje de error si existe
+    const errorMessage = req.query.error === 'invalid_credentials' 
+        ? 'Usuario o contraseña incorrectos' 
+        : null;
+    
+    res.render("login", { error: errorMessage });
 })
 
 viewsRouter.get ("/register", (req, res)=>{
